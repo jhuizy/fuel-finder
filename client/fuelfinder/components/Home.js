@@ -1,11 +1,13 @@
 /* @flow */
 
 import React, { Component } from "react";
-import { StyleSheet, View, Text, Dimensions } from "react-native";
+import { StyleSheet, View, Text, Dimensions, Animated } from "react-native";
 import Interactable from "react-native-interactable";
 import Map from "./Map";
 import List from "./List";
 import MOCK_DATA from "../mock/mockdata";
+
+const PullHeight = 70;
 
 const Screen = {
   width: Dimensions.get("window").width,
@@ -45,23 +47,36 @@ export default class Home extends Component {
       },
       loading: false
     };
+    this._deltaY = new Animated.Value(Screen.height);
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.background}>
+        <Animated.View
+          style={[
+            styles.background,
+            {
+              backgroundColor: "black",
+              opacity: this._deltaY.interpolate({
+                inputRange: [0, Screen.height],
+                outputRange: [0.5, 1]
+              })
+            }
+          ]}
+        >
           <Map markers={this.state.markers} onRegionChange={region => {}} />
-        </View>
+        </Animated.View>
         <Interactable.View
           style={styles.interactable}
           verticalOnly={true}
           snapPoints={[
             { y: 0 },
             { y: Screen.height * 0.4 },
-            { y: Screen.height - 90 }
+            { y: Screen.height - PullHeight }
           ]}
-          initialPosition={{ y: Screen.height - 90 }}
+          initialPosition={{ y: Screen.height - PullHeight }}
+          animatedValueY={this._deltaY}
         >
           <View style={styles.listHandle}>
             <Text>{this.state.markers.length} result(s)</Text>
@@ -94,8 +109,7 @@ export default class Home extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    marginTop: 20
+    flex: 1
   },
   background: {
     position: "absolute",
@@ -111,8 +125,12 @@ const styles = StyleSheet.create({
   listHandle: {
     justifyContent: "center",
     alignItems: "center",
-    height: 70,
-    backgroundColor: "#efefef"
+    height: PullHeight,
+    backgroundColor: "#efefef",
+    shadowColor: "#000000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowRadius: 5,
+    shadowOpacity: 0.4
   },
   list: {
     flex: 1,
