@@ -1,0 +1,16 @@
+{
+  "name": "handlers",
+  "version": "1.0.0",
+  "description": "",
+  "main": "search.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jordan",
+  "license": "ISC",
+  "dependencies": {
+    "geolib": "^2.0.22",
+    "request": "^2.81.0",
+    "xml2js": "^0.4.17"
+  }
+}
