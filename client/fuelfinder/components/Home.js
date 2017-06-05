@@ -1,7 +1,14 @@
 /* @flow */
 
 import React, { Component } from "react";
-import { StyleSheet, View, Text, Dimensions, Animated } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  Dimensions,
+  Animated,
+  TouchableHighlight
+} from "react-native";
 import Interactable from "react-native-interactable";
 import Map from "./Map";
 import List from "./List";
@@ -45,9 +52,11 @@ export default class Home extends Component {
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0422
       },
-      loading: false
+      loading: false,
+      snapPoint: 0
     };
     this._deltaY = new Animated.Value(Screen.height);
+    this._refs = {};
   }
 
   render() {
@@ -68,6 +77,7 @@ export default class Home extends Component {
           <Map markers={this.state.markers} onRegionChange={region => {}} />
         </Animated.View>
         <Interactable.View
+          ref={ref => this._refs["handle"] = ref}
           style={styles.interactable}
           verticalOnly={true}
           snapPoints={[
@@ -78,9 +88,12 @@ export default class Home extends Component {
           initialPosition={{ y: Screen.height - PullHeight }}
           animatedValueY={this._deltaY}
         >
-          <View style={styles.listHandle}>
-            <Text>{this.state.markers.length} result(s)</Text>
-          </View>
+          <TouchableHighlight onPress={this._onHandleTap.bind(this)}>
+            <View style={styles.listHandle}>
+              <Text>{this.state.markers.length} result(s)</Text>
+            </View>
+          </TouchableHighlight>
+
           <List style={styles.list} items={this.state.markers} />
         </Interactable.View>
 
@@ -88,7 +101,18 @@ export default class Home extends Component {
     );
   }
 
-  onRegionChange(region) {
+  _onHandleTap() {
+    switch (this._deltaY._value) {
+      case Math.ceil(Screen.height * 0.4):
+        this._refs.handle.snapTo({ index: 2 });
+        break;
+      default:
+        this._refs.handle.snapTo({ index: 1 });
+        break;
+    }
+  }
+
+  _onRegionChange(region) {
     this.setState({
       ...this.state,
       region,
