@@ -12,6 +12,7 @@ import {
 import Interactable from "react-native-interactable";
 import Map from "./Map";
 import List from "./List";
+import Toolbar from "./Toolbar";
 import MOCK_DATA from "../mock/mockdata";
 
 const PullHeight = 70;
@@ -62,11 +63,12 @@ export default class Home extends Component {
   render() {
     return (
       <View style={styles.container}>
+       
         <Animated.View
           style={[
             styles.background,
             {
-              backgroundColor: "black",
+              backgroundColor: "white",
               opacity: this._deltaY.interpolate({
                 inputRange: [0, Screen.height],
                 outputRange: [0.5, 1]
@@ -74,7 +76,10 @@ export default class Home extends Component {
             }
           ]}
         >
-          <Map markers={this.state.markers} onRegionChange={region => {}} />
+        <View style={styles.toolbar}>
+          <Toolbar title="Fuel Finder"/>
+        </View>
+        <Map markers={this.state.markers} onRegionChange={region => {}} />
         </Animated.View>
         <Interactable.View
           ref={ref => this._refs["handle"] = ref}
@@ -133,7 +138,12 @@ export default class Home extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    flexDirection: 'column'
+  },
+  toolbar: {
+    marginTop: 20,
+    height: 50
   },
   background: {
     position: "absolute",
