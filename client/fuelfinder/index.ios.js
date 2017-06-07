@@ -6,14 +6,12 @@
 
 import React, { Component } from "react";
 import { AppRegistry, StyleSheet, Text, View } from "react-native";
-import Home from './components/Home';
+import Entry from './components/Entry';
 
 export default class fuelfinder extends Component {
   render() {
     return (
-      <View style={styles.container}>
-        <Home />
-      </View>
+      <Entry/> 
     );
   }
 }

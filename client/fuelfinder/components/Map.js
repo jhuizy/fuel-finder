@@ -14,7 +14,7 @@ export default class Map extends Component {
           onRegionChange={(region) => this.props.onRegionChange(region)}
           region={this.props.region}
         >
-          {this.props.markers.map(marker => <Marker coordinate={marker.coordinate} />)}
+          {this.props.markers.map(marker => <Marker key={marker} coordinate={marker.coordinate} />)}
 
         </MapView>
       </View>

@@ -13,14 +13,18 @@ import Interactable from "react-native-interactable";
 import Map from "./Map";
 import List from "./List";
 import Toolbar from "./Toolbar";
+import FilterDrawer from "./FilterDrawer";
 import MOCK_DATA from "../mock/mockdata";
 
 const PullHeight = 70;
+const PullWidth = 50;
 
 const Screen = {
   width: Dimensions.get("window").width,
   height: Dimensions.get("window").height
 };
+
+const FuelTypes = ["Unleaded", "Premium Unleaded", "Diesel", "AutoGas"];
 
 const performSearchMock = ({ latitude, longitude }) => {
   return new Promise.resolve(MOCK_DATA);
@@ -54,16 +58,19 @@ export default class Home extends Component {
         longitudeDelta: 0.0422
       },
       loading: false,
-      snapPoint: 0
+      snapPoint: 0,
+      filterItems: FuelTypes.map(item => ({ name: item, selected: false })),
+      filterDrawerOpen: false
     };
     this._deltaY = new Animated.Value(Screen.height);
+    this._filterDrawerDeltaX = new Animated.Value(Screen.width);
     this._refs = {};
   }
 
   render() {
     return (
       <View style={styles.container}>
-       
+
         <Animated.View
           style={[
             styles.background,
@@ -76,11 +83,35 @@ export default class Home extends Component {
             }
           ]}
         >
-        <View style={styles.toolbar}>
-          <Toolbar title="Fuel Finder"/>
-        </View>
-        <Map markers={this.state.markers} onRegionChange={region => {}} />
+          <View style={styles.toolbar}>
+            <Toolbar
+              title="Fuel Finder"
+              onFilterPressed={this._onFilterPressed.bind(this)}
+            />
+          </View>
+          <Map markers={this.state.markers} onRegionChange={region => {}} />
         </Animated.View>
+        <Interactable.View
+          ref={ref => this._refs["filterDrawer"] = ref}
+          style={styles.filterDrawer}
+          horizontalOnly={true}
+          snapPoints={[
+            { x: Screen.width - PullWidth },
+            { x: Screen.width * 0.2 }
+          ]}
+          initialPosition={{ x: Screen.width - PullWidth }}
+          animatedValue={this._filterDrawerDeltaX}
+          onSnap={this._onFilterDrawerSnapped.bind(this)}
+        >
+          <View style={styles.filterDrawerContainer}>
+            <View style={{ width: PullWidth }} />
+            <FilterDrawer
+              items={this.state.filterItems}
+              onItemSelected={this._onItemSelected.bind(this)}
+            />
+          </View>
+
+        </Interactable.View>
         <Interactable.View
           ref={ref => this._refs["handle"] = ref}
           style={styles.interactable}
@@ -107,7 +138,7 @@ export default class Home extends Component {
   }
 
   _onHandleTap() {
-    switch (this._deltaY._value) {
+    switch (this._filterDrawerDeltaX._value) {
       case Math.ceil(Screen.height * 0.4):
         this._refs.handle.snapTo({ index: 2 });
         break;
@@ -115,6 +146,26 @@ export default class Home extends Component {
         this._refs.handle.snapTo({ index: 1 });
         break;
     }
+  }
+
+  _onFilterPressed() {
+    if (this.state.filterDrawerOpen) {
+      this._refs.filterDrawer.snapTo({ index: 0 });
+    } else {
+      this._refs.filterDrawer.snapTo({ index: 1 });
+    }
+
+    this.setState({
+      ...this.state,
+      filterDrawerOpen: !this.state.filterDrawerOpen
+    });
+  }
+
+  _onFilterDrawerSnapped(event) {
+    this.setState({
+      ...this.state,
+      filterDrawerOpen: event.nativeEvent.index === 1
+    });
   }
 
   _onRegionChange(region) {
@@ -134,12 +185,25 @@ export default class Home extends Component {
       });
     });
   }
+
+  _onItemSelected(item) {
+    this.setState({
+      ...this.state,
+      filterItems: this.state.filterItems.map(i => {
+        if (i === item) {
+          return { ...item, selected: !item.selected };
+        } else {
+          return i;
+        }
+      })
+    });
+  }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column'
+    flexDirection: "column"
   },
   toolbar: {
     marginTop: 20,
@@ -153,7 +217,11 @@ const styles = StyleSheet.create({
     right: 0
   },
   interactable: {
-    flex: 1,
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    position: "absolute",
     flexDirection: "column"
   },
   listHandle: {
@@ -169,5 +237,17 @@ const styles = StyleSheet.create({
   list: {
     flex: 1,
     height: Screen.height
+  },
+  filterDrawer: {
+    position: "absolute",
+    left: 0,
+    right: -Screen.width,
+    top: 0,
+    bottom: 0,
+    marginTop: 20 + 50
+  },
+  filterDrawerContainer: {
+    flex: 1,
+    flexDirection: "row"
   }
 });
