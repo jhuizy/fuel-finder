@@ -14,6 +14,7 @@ import Map from "./Map";
 import List from "./List";
 import Toolbar from "./Toolbar";
 import FilterDrawer from "./FilterDrawer";
+import Search from "./Search";
 import MOCK_DATA from "../mock/mockdata";
 
 const PullHeight = 70;
@@ -79,6 +80,16 @@ export default class Home extends Component {
             title="Fuel Finder"
             onFilterPressed={this._onFilterPressed.bind(this)}
           />
+        </View>
+
+        <View
+          style={[
+            StyleSheet.absoluteFillObject,
+            styles.searchContainer,
+            shadow
+          ]}
+        >
+          <Search />
         </View>
 
         <Interactable.View
@@ -230,5 +241,11 @@ const styles = StyleSheet.create({
   filterDrawerContainer: {
     flex: 1,
     flexDirection: "row"
+  },
+  searchContainer: {
+    marginTop: 20 + 50 + 20,
+    marginLeft: 10,
+    marginRight: 10,
+    height: 50
   }
 });
