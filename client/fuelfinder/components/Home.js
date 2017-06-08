@@ -69,31 +69,21 @@ export default class Home extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-
-        <Animated.View
-          style={[
-            styles.background,
-            {
-              backgroundColor: "white",
-              opacity: this._deltaY.interpolate({
-                inputRange: [0, Screen.height],
-                outputRange: [0.5, 1]
-              })
-            }
-          ]}
-        >
-          <View style={styles.toolbar}>
-            <Toolbar
-              title="Fuel Finder"
-              onFilterPressed={this._onFilterPressed.bind(this)}
-            />
-          </View>
+      <View style={StyleSheet.absoluteFillObject}>
+        <View style={StyleSheet.absoluteFillObject}>
           <Map markers={this.state.markers} onRegionChange={region => {}} />
-        </Animated.View>
+        </View>
+
+        <View style={[StyleSheet.absoluteFillObject, styles.toolbar, shadow]}>
+          <Toolbar
+            title="Fuel Finder"
+            onFilterPressed={this._onFilterPressed.bind(this)}
+          />
+        </View>
+
         <Interactable.View
           ref={ref => this._refs["handle"] = ref}
-          style={styles.interactable}
+          style={[StyleSheet.absoluteFillObject]}
           verticalOnly={true}
           snapPoints={[
             { y: 0 },
@@ -103,13 +93,15 @@ export default class Home extends Component {
           initialPosition={{ y: Screen.height - PullHeight }}
           animatedValueY={this._deltaY}
         >
-          <TouchableHighlight onPress={this._onHandleTap.bind(this)}>
-            <View style={styles.listHandle}>
-              <Text>{this.state.markers.length} result(s)</Text>
-            </View>
-          </TouchableHighlight>
+          <View style={{ flex: 1, flexDirection: "column" }}>
+            <TouchableHighlight onPress={this._onHandleTap.bind(this)}>
+              <View style={styles.listHandle}>
+                <Text>{this.state.markers.length} result(s)</Text>
+              </View>
+            </TouchableHighlight>
+            <List style={styles.list} items={this.state.markers} />
+          </View>
 
-          <List style={styles.list} items={this.state.markers} />
         </Interactable.View>
         <Interactable.View
           ref={ref => this._refs["filterDrawer"] = ref}
@@ -199,29 +191,23 @@ export default class Home extends Component {
   }
 }
 
+const shadow = {
+  shadowColor: "#000000",
+  shadowOffset: { width: 0, height: 0 },
+  shadowRadius: 5,
+  shadowOpacity: 0.5,
+  elevation: 10
+};
+
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    flexDirection: "column"
+    flex: 1
   },
   toolbar: {
-    marginTop: 20,
-    height: 50
-  },
-  background: {
-    position: "absolute",
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0
-  },
-  interactable: {
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    position: "absolute",
-    flexDirection: "column"
+    flex: 1,
+    paddingTop: 20,
+    height: 70,
+    backgroundColor: "#ffffff"
   },
   listHandle: {
     justifyContent: "center",
@@ -238,11 +224,7 @@ const styles = StyleSheet.create({
     height: Screen.height
   },
   filterDrawer: {
-    position: "absolute",
-    left: 0,
-    right: -Screen.width,
-    top: 0,
-    bottom: 0,
+    ...StyleSheet.absoluteFillObject,
     marginTop: 20 + 50
   },
   filterDrawerContainer: {
