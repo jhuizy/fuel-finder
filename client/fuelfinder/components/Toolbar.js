@@ -8,7 +8,7 @@ class Toolbar extends Component {
       <View style={styles.container}>
         <View>
           <TouchableHighlight onPress={() => {}}>
-            <Icon name="menu" size={30} />
+            <Icon color="#00000000" name="menu" size={30} />
           </TouchableHighlight>
         </View>
         <View>

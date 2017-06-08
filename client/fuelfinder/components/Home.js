@@ -92,6 +92,26 @@ export default class Home extends Component {
           <Map markers={this.state.markers} onRegionChange={region => {}} />
         </Animated.View>
         <Interactable.View
+          ref={ref => this._refs["handle"] = ref}
+          style={styles.interactable}
+          verticalOnly={true}
+          snapPoints={[
+            { y: 0 },
+            { y: Screen.height * 0.4 },
+            { y: Screen.height - PullHeight }
+          ]}
+          initialPosition={{ y: Screen.height - PullHeight }}
+          animatedValueY={this._deltaY}
+        >
+          <TouchableHighlight onPress={this._onHandleTap.bind(this)}>
+            <View style={styles.listHandle}>
+              <Text>{this.state.markers.length} result(s)</Text>
+            </View>
+          </TouchableHighlight>
+
+          <List style={styles.list} items={this.state.markers} />
+        </Interactable.View>
+        <Interactable.View
           ref={ref => this._refs["filterDrawer"] = ref}
           style={styles.filterDrawer}
           horizontalOnly={true}
@@ -112,27 +132,6 @@ export default class Home extends Component {
           </View>
 
         </Interactable.View>
-        <Interactable.View
-          ref={ref => this._refs["handle"] = ref}
-          style={styles.interactable}
-          verticalOnly={true}
-          snapPoints={[
-            { y: 0 },
-            { y: Screen.height * 0.4 },
-            { y: Screen.height - PullHeight }
-          ]}
-          initialPosition={{ y: Screen.height - PullHeight }}
-          animatedValueY={this._deltaY}
-        >
-          <TouchableHighlight onPress={this._onHandleTap.bind(this)}>
-            <View style={styles.listHandle}>
-              <Text>{this.state.markers.length} result(s)</Text>
-            </View>
-          </TouchableHighlight>
-
-          <List style={styles.list} items={this.state.markers} />
-        </Interactable.View>
-
       </View>
     );
   }
