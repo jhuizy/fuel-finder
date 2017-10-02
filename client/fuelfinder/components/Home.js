@@ -82,16 +82,6 @@ export default class Home extends Component {
           />
         </View>
 
-        <View
-          style={[
-            StyleSheet.absoluteFillObject,
-            styles.searchContainer,
-            shadow
-          ]}
-        >
-          <Search />
-        </View>
-
         <Interactable.View
           ref={ref => this._refs["handle"] = ref}
           style={[StyleSheet.absoluteFillObject]}
